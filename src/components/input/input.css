@@ -1,0 +1,13 @@
+.inp-container {
+  display: flex;
+  justify-content: center;
+}
+
+.userInput {
+  position: relative;
+  top: 8rem;
+  width: 17rem;
+  height: 2rem;
+  padding: 1rem;
+  font-size: 1.2rem;
+}
