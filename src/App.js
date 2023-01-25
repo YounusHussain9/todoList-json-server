@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Todos from "./components/todoItem/Todos";
 import Input from "./components/input/Input";
-import Example from "./components/modal/Modal";
+import Search from "./components/search/Search";
 
 function App() {
   // state declaration
@@ -10,10 +10,17 @@ function App() {
   const [userTodo, setUserTodo] = useState("");
   const [isUpdate, setIsUpdate] = useState(false);
   const [updateId, setUpdateId] = useState(0);
+  const [filterValue, setFilterValue] = useState(todo);
+  const [searchField, setSearchField] = useState("");
 
   // variable declaration
   const date = new Date();
   const time = `${date.getHours()}:${date.getMinutes()}`;
+
+  const SearchChange = (e) => {
+    const search = e.target.value.toLocaleLowerCase();
+    setSearchField(search);
+  };
 
   //fetch data from api
   const getTodoFun = async () => {
@@ -37,7 +44,7 @@ function App() {
   //delete function
   const deleteTodo = async (id) => {
     const req = await axios.delete(`http://localhost:400/todos/${id}`);
-    setTodo([req]);
+    setFilterValue([req]);
     getTodoFun();
   };
 
@@ -45,11 +52,7 @@ function App() {
   const updateTodo = async (id) => {
     setIsUpdate(true);
     setUpdateId(id);
-    console.log(id);
-    // const req = await axios.put(`http://localhost:400/todos/${id}`, {});
   };
-
-  // console.log(updateId)
 
   //use Effect run Once
   useEffect(() => {
@@ -61,18 +64,28 @@ function App() {
     postTodoFun();
   }, [userTodo]);
 
+  // // useffect for filtering
+  useEffect(() => {
+    const filtering = todo.filter((data) => {
+      return data.item.toLocaleLowerCase().includes(searchField);
+    });
+    setFilterValue(filtering);
+  }, [todo, searchField]);
+
   return (
     <>
-      <h2>Iam React Json Server</h2>
+      <Search onchange={SearchChange} />
       <Input userTodo={(e) => setUserTodo(e)} placeholder="Todos" />
       <Todos
-        todo={todo}
-        settodo={setTodo}
+        todo={filterValue}
+        settodo={setFilterValue}
         deleteTodo={deleteTodo}
         updateTodo={updateTodo}
+        setisupdate={setIsUpdate}
         isupdate={isUpdate}
         updateid={updateId}
         fetch={getTodoFun}
+        time={time}
       />
     </>
   );

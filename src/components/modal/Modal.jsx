@@ -1,33 +1,47 @@
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
+import axios from "axios";
+import React, { useState } from "react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { Form } from "react-bootstrap";
 
-function Example({handleshow}) {
+function Modaal({ data, settodo, todo, fetch, time }) {
+  const [updateTodo, setUpdateTodo] = useState(data.item);
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(handleshow);
+  const handleClose = async () => {
+    const req = await axios.put(`http://localhost:400/todos/${data.id}`, {
+      id: data.id,
+      item: updateTodo,
+      time: time,
+    });
+    settodo([...todo, req]);
+    fetch();
+    setShow(false);
+  };
+
+  const handleShow = () => setShow(true);
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Launch demo modal
+      <Button variant="" onClick={handleShow}>
+        📝
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
+          <Modal.Title>Update</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Update</Form.Label>
-              <Form.Control
-                type="text"
-                autoFocus
-              />
-            </Form.Group>
-          </Form>
+          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="text"
+              value={updateTodo}
+              placeholder="s"
+              autoFocus
+              onChange={(e) => setUpdateTodo(e.target.value)}
+            />
+          </Form.Group>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -41,6 +55,4 @@ function Example({handleshow}) {
     </>
   );
 }
-
-export default Example
-// render(<Example />);
+export default Modaal;
